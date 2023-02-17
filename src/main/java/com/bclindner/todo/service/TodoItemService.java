@@ -34,9 +34,9 @@ public class TodoItemService {
     
     /**
      * Return all to-do list items in the database.
-     * @return A list of to-do items.
+     * @return An iterator with all to-do items.
      */
-    public List<TodoItem> findAll() {
+    public Iterable<TodoItem> findAll() {
         return repository.findAll();
     }
     
