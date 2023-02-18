@@ -23,7 +23,7 @@ import com.bclindner.todo.service.TodoItemService;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters=false)
 public class TodoItemControllerTests {
 
     // Request tester
