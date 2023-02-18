@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.bclindner.todo.dto.DataResponseDTO;
 import com.bclindner.todo.exception.ResourceExistsException;
 import com.bclindner.todo.exception.ResourceNotFoundException;
 import com.bclindner.todo.model.TodoItem;
@@ -37,7 +36,7 @@ public class TodoItemController {
      * @return The created TodoItem.
      */
     @PostMapping("/")
-    public ResponseEntity<DataResponseDTO<TodoItem>> createTodo(TodoItem todoItem) throws ResourceExistsException {
+    public ResponseEntity<TodoItem> createTodo(TodoItem todoItem) throws ResourceExistsException {
         // ensure the todo item does not have a set ID
         //
         // this is technically OK in REST conventions, but it's generally
@@ -65,7 +64,7 @@ public class TodoItemController {
             // header is enough to make this a REST-compliant HTTP 201 response.
             // we do it here for convenience, and because we already have the
             // object anyways
-            .body(new DataResponseDTO<TodoItem>(newTodoItem));
+            .body(newTodoItem);
     }
 
     /**
@@ -77,8 +76,8 @@ public class TodoItemController {
      * @return To-do item list.
      */
     @GetMapping("/")
-    public DataResponseDTO<Iterable<TodoItem>> getAllTodos() {
-        return new DataResponseDTO<Iterable<TodoItem>>(service.findAll());
+    public Iterable<TodoItem> getAllTodos() {
+        return service.findAll();
     }
     
     /**
@@ -87,13 +86,13 @@ public class TodoItemController {
      * @return TodoItem (if it exists).
      */
     @GetMapping("/{id}")
-    public DataResponseDTO<TodoItem> getTodoById(@PathVariable Long id) {
-        Optional<TodoItem> ti = service.getById(id);
+    public TodoItem getTodoById(@PathVariable Long id) {
+        Optional<TodoItem> todoItem = service.getById(id);
         // if we got nothing, throw an exception
-        if(!ti.isPresent()) {
+        if(!todoItem.isPresent()) {
             throw new ResourceNotFoundException();
         }
-        return new DataResponseDTO<TodoItem>(ti.get());
+        return todoItem.get();
     }
 
     /**
@@ -103,15 +102,15 @@ public class TodoItemController {
      * @return Updated TodoItem.
      */
     @PutMapping("/{id}")
-    public DataResponseDTO<TodoItem> updateTodo(@PathVariable Long id, @RequestBody TodoItem todoItem) {
+    public TodoItem updateTodo(@PathVariable Long id, @RequestBody TodoItem todoItem) {
         // ensure the ID does not exist
         if(!service.existsById(id)) {
             // if doesn't, this would be a creation - throw an exception
             throw new ResourceExistsException();
         }
-        // run the update, send as a DataResponseDTO
-        TodoItem todo = service.save(todoItem);
-        return new DataResponseDTO<TodoItem>(todo);
+        // run the update, return the updated TodoItem
+        TodoItem newTodoItem = service.save(todoItem);
+        return newTodoItem;
     }
     
     /**

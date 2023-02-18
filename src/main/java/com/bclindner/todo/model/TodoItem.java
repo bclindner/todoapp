@@ -67,6 +67,11 @@ public class TodoItem {
         return lastModifiedDate;
     }
     /**
+     * Default constructor for the TodoItem.
+     */
+    public TodoItem() {
+    }
+    /**
      * Create a basic TodoItem with no ID in an incomplete state.
      * This is helpful for creation in a TodoItemRepository.
      * @param title Title of the TodoItem.
