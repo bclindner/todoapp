@@ -111,9 +111,9 @@ public class TodoItemController {
         }
     )
     public ResponseEntity<Collection<TodoItem>> getAllTodos() {
-        var todos = service.findAll();
+        Iterable<TodoItem> todos = service.findAll();
         // convert to a collection so we can see the length
-        var todoList = new ArrayList<TodoItem>();
+        ArrayList<TodoItem> todoList = new ArrayList<TodoItem>();
         todos.forEach(todoList::add);
         // REST convention: if the list is empty, return 204 instead of 200,
         // just as extra confirmation that yes, there are no TodoItems

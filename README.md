@@ -43,13 +43,9 @@ auth0.audience=audience-id-for-your-app
 spring.security.oauth2.resourceserver.jwt.issuer-uri=jwt-issuer-uri
 ```
 
-From here, you should be able to run the app in dev directly via:
-
-```
-./mvnw spring-boot:run
-```
-
-`application-dev.properties`, in the same directory as the default properties.
+From here, you should be able to run the app in dev directly via this command.
+Note the profile argument, which is necessary for how we have set up the dev
+profile with our credentials earlier:
 
 ```
 ./mvnw -Dspring-boot.run.profiles="dev,default" spring-boot:run
@@ -78,7 +74,7 @@ This will build a runnable fat JAR in `target/todo-0.0.1-SNAPSHOT.jar`.
 From here, just run:
 
 ```
-java -jar target/todo-0.0.1-SNAPSHOT.jar
+java -jar target/todo-0.0.1-SNAPSHOT.jar -
 ```
 
 This will start the app up with the settings you specify, without need for any

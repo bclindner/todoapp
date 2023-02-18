@@ -2,6 +2,9 @@ package com.bclindner.todo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +37,7 @@ class TodoItemServiceTests {
 	
 	@Test
 	void todoItemCreate() {
-		var todo = todoItemService.save(new TodoItem("test todoItemCreate"));
+		TodoItem todo = todoItemService.save(new TodoItem("test todoItemCreate"));
 		assertNotNull(todo, "Created TodoItem is null");
 		assertNotNull(todo.id, "Created TodoItem has null ID");
 		assertNotNull(todo.text, "Created TodoItem text was not saved properly");
@@ -42,21 +45,32 @@ class TodoItemServiceTests {
 	
 	@Test
 	void todoItemRead() {
-		var todo = todoItemService.save(new TodoItem("test todoItemRead"));
-		var todoDbContainer = todoItemService.getById(todo.id);
+		TodoItem todo = todoItemService.save(new TodoItem("test todoItemRead"));
+		Optional<TodoItem> todoDbContainer = todoItemService.getById(todo.id);
 		assertTrue(todoDbContainer.isPresent(), "TodoItem could not be retrieved after creation");
-		var todoDb = todoDbContainer.get();
+		TodoItem todoDb = todoDbContainer.get();
 		compareTodoItems(todo, todoDb);
+	}
+	
+	@Test
+	void todoItemReadCompleted() {
+		todoItemService.save(new TodoItem("test todoItemReadCompleted", true));
+		TodoItem incompleteTodo = todoItemService.save(new TodoItem("test todoItemReadCompleted"));
+		// get items and ensure the completed todo's ID is the only one there
+		Iterable<TodoItem> todoDbIterator = todoItemService.findIncomplete();
+		ArrayList<TodoItem> todoList = new ArrayList<TodoItem>();
+		todoDbIterator.forEach(todoList::add);
+		assertEquals(todoList.get(0).getId(), incompleteTodo.getId(), "Incomplete TodoItem was not retrieved from findIncomplete");
 	}
 
 	@Test
 	void todoItemUpdate() {
-		var todo = todoItemService.save(new TodoItem("test something...?"));
+		TodoItem todo = todoItemService.save(new TodoItem("test something...?"));
 		todo.setText("test todoItemUpdate");
 		todoItemService.save(todo);
-		var todoDbContainer = todoItemService.getById(todo.id);
+		Optional<TodoItem> todoDbContainer = todoItemService.getById(todo.id);
 		assertTrue(todoDbContainer.isPresent(), "TodoItem could not be retrieved after update");
-		var todoDb = todoDbContainer.get();
+		TodoItem todoDb = todoDbContainer.get();
 		compareTodoItems(todo, todoDb);
 		// one particular issue i found during this caused the createDate to be null when updating, so let's check that
 		assertNotNull(todoDb.getCreatedDate(), "Updated TodoItem has no CreatedDate");
@@ -65,7 +79,7 @@ class TodoItemServiceTests {
 
 	@Test
 	void todoItemDelete() {
-		var todo = todoItemService.save(new TodoItem("test something...?"));
+		TodoItem todo = todoItemService.save(new TodoItem("test something...?"));
 		assertTrue(todoItemService.existsById(todo.id), "Created TodoItem does not show in existsById()");
 		todoItemService.deleteById(todo.id);
 		assertTrue(!todoItemService.existsById(todo.id), "Delete TodoItem still shows in existsById()");

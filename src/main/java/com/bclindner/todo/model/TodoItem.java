@@ -40,6 +40,15 @@ public class TodoItem {
         this.text = text;
     }
     /**
+     * Create a basic TodoItem with no ID.
+     * This is helpful for creation in a TodoItemRepository.
+     * @param text Text of the TodoItem.
+     */
+    public TodoItem(String text, Boolean completed) {
+        this.text = text;
+        this.completed = completed;
+    }
+    /**
      * Database generated ID.
      * Managed by Spring Data.
      */
