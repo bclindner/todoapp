@@ -1,6 +1,5 @@
 package com.bclindner.todo.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +15,21 @@ public class TodoItemService {
     
     /**
      * Save a TodoItem to the database.
+     * This can be used for both creation and updates.
      * @param todoItem
      * @return The saved to-do item.
      */
     public TodoItem save(TodoItem todoItem) {
         return repository.save(todoItem);
+    }
+    
+    /**
+     * Check to see if a particular ID is already mapped to a TodoItem.
+     * @param id
+     * @return true if the TodoItem exists, false otherwise.
+     */
+    public boolean existsById(Long id) {
+        return repository.existsById(id);
     }
     
     /**
