@@ -34,7 +34,7 @@ public class TodoItem {
      * @param title Title of the TodoItem.
      */
     public TodoItem(String title) {
-        this.title = title;
+        this.text = title;
     }
     /**
      * Database generated ID.
@@ -48,15 +48,14 @@ public class TodoItem {
     }
     /**
      * Text content of the to-do item.
-     * In a more complicated model, this would have a "description" field to go
-     * along with it.
      */
-    public String title;
-    public String getTitle() {
-        return title;
+    @Column(length=256,nullable=false)
+    public String text;
+    public String getText() {
+        return text;
     }
-    public void setTitle(String title) {
-        this.title = title;
+    public void setText(String title) {
+        this.text = title;
     }
     /**
      * Whether or not this TodoItem has been marked as completed.
@@ -73,6 +72,8 @@ public class TodoItem {
      * Managed by Spring Data.
      */
     @CreatedDate
+    // prevent this from being updated:
+    // https://github.com/spring-projects/spring-data-rest/issues/1565
     @Column(updatable=false)
     private Instant createdDate;
     public Instant getCreatedDate() {
@@ -92,7 +93,7 @@ public class TodoItem {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((title == null) ? 0 : title.hashCode());
+        result = prime * result + ((text == null) ? 0 : text.hashCode());
         result = prime * result + ((completed == null) ? 0 : completed.hashCode());
         result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
@@ -112,10 +113,10 @@ public class TodoItem {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (title == null) {
-            if (other.title != null)
+        if (text == null) {
+            if (other.text != null)
                 return false;
-        } else if (!title.equals(other.title))
+        } else if (!text.equals(other.text))
             return false;
         if (completed == null) {
             if (other.completed != null)
