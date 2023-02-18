@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.models.info.Info;
 @SpringBootApplication
 @EnableJpaRepositories // needed for @Entity
 @EnableJpaAuditing     // needed for @CreatedDate, @LastModifiedDate, etc.
+@EnableScheduling      // needed for scheduled jobs
 public class TodoApplication {
 
 	public static void main(String[] args) {
@@ -20,7 +22,7 @@ public class TodoApplication {
 	}
 	
 	/**
-	 * Spec for the OpenAPI.
+	 * Spec for the OpenAPI documentation.
 	 * @param appVersion
 	 * @return
 	 */

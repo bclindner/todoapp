@@ -42,6 +42,14 @@ public class TodoItemService {
     }
     
     /**
+     * Get TodoItems that are not marked complete.
+     * @return
+     */
+    public Iterable<TodoItem> findIncomplete() {
+        return repository.findByCompletedFalse();
+    }
+    
+    /**
      * Return all to-do list items in the database.
      * @return An iterator with all to-do items.
      */
