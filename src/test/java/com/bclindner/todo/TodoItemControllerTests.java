@@ -19,10 +19,7 @@ import com.bclindner.todo.model.TodoItem;
 import com.bclindner.todo.service.TodoItemService;
 
 /**
- * General MockMvc integration tests for the API.
- * 
- * Not actually a part of the deliverable, these are just to make sure the APIs
- * are up to my personal spec.
+ * General MockMvc controller tests for the API.
  */
 @SpringBootTest
 @ActiveProfiles("test")
@@ -101,7 +98,26 @@ public class TodoItemControllerTests {
     }
 
     /**
-     * Test access to a TodoItem resource.
+     * Test access to the TodoItem collection.
+     * @throws Exception
+     */
+    @Test
+    @DirtiesContext
+    public void testGetAll() throws Exception {
+        // add to service
+        TodoItem todoItem1 = todoItemService.save(new TodoItem("testGetAll1"));
+        TodoItem todoItem2 = todoItemService.save(new TodoItem("testGetAll2"));
+        mvc.perform(
+            get("/todo-item/")
+            .accept("application/json")
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.[0].id").value(todoItem1.getId()))
+        .andExpect(jsonPath("$.[1].id").value(todoItem2.getId()));
+    }
+    
+    /**
+     * Test access to a single TodoItem object.
      * @throws Exception
      */
     @Test
@@ -110,11 +126,11 @@ public class TodoItemControllerTests {
         // add to service
         TodoItem todoItem = todoItemService.save(new TodoItem("testGet"));
         mvc.perform(
-            get("/todo-item/")
+            get("/todo-item/1")
             .accept("application/json")
         )
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.[0].id").value(todoItem.getId()));
+        .andExpect(jsonPath("$.id").value(todoItem.getId()));
     }
     
     
