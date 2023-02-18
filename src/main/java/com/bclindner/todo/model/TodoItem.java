@@ -12,6 +12,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Entity class for TodoItems.
@@ -21,6 +23,7 @@ import jakarta.persistence.Id;
  * i.e. iCalendar's VTODO spec.
  */
 @Entity
+// Add AuditingEntityListener to pick up CreatedDate/LastModifiedDate
 @EntityListeners(AuditingEntityListener.class)
 public class TodoItem {
     /**
@@ -29,7 +32,7 @@ public class TodoItem {
     public TodoItem() {
     }
     /**
-     * Create a basic TodoItem with no ID in an incomplete state.
+     * Create a basic TodoItem with no ID and completed set to false.
      * This is helpful for creation in a TodoItemRepository.
      * @param text Text of the TodoItem.
      */
@@ -52,6 +55,8 @@ public class TodoItem {
      */
     @Column(length=256,nullable=false)
     @Schema(example="To-do item", description = "Text content of the to-do item.")
+    @NotNull
+    @Size(max=256)
     public String text;
     public String getText() {
         return text;
