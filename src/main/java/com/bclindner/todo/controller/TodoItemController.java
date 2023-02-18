@@ -36,7 +36,7 @@ public class TodoItemController {
      * @return The created TodoItem.
      */
     @PostMapping("/")
-    public ResponseEntity<TodoItem> createTodo(TodoItem todoItem) throws ResourceExistsException {
+    public ResponseEntity<TodoItem> createTodo(@RequestBody TodoItem todoItem) throws ResourceExistsException {
         // ensure the todo item does not have a set ID
         //
         // this is technically OK in REST conventions, but it's generally
