@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
@@ -31,10 +30,10 @@ public class TodoItem {
     /**
      * Create a basic TodoItem with no ID in an incomplete state.
      * This is helpful for creation in a TodoItemRepository.
-     * @param title Title of the TodoItem.
+     * @param text Text of the TodoItem.
      */
-    public TodoItem(String title) {
-        this.text = title;
+    public TodoItem(String text) {
+        this.text = text;
     }
     /**
      * Database generated ID.
@@ -54,8 +53,8 @@ public class TodoItem {
     public String getText() {
         return text;
     }
-    public void setText(String title) {
-        this.text = title;
+    public void setText(String text) {
+        this.text = text;
     }
     /**
      * Whether or not this TodoItem has been marked as completed.
