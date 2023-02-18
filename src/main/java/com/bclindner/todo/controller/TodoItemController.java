@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.bclindner.todo.exception.BadResourceException;
 import com.bclindner.todo.exception.ResourceExistsException;
 import com.bclindner.todo.exception.ResourceNotFoundException;
 import com.bclindner.todo.model.TodoItem;
@@ -52,7 +53,7 @@ public class TodoItemController {
         TodoItem newTodoItem = service.save(todoItem);
         // REST convention: take the new item's ID and generate a 201 response
         // with a Location header pointing to it
-        // see also https://stackoverflow.com/a/52024684
+        // see also: https://stackoverflow.com/a/52024684
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
@@ -103,7 +104,13 @@ public class TodoItemController {
      */
     @PutMapping("/{id}")
     public TodoItem updateTodo(@PathVariable Long id, @RequestBody TodoItem todoItem) {
-        // ensure the ID does not exist
+        // ensure the todoItem ID matches the path
+        if (id != todoItem.id) {
+            throw new BadResourceException(
+                String.format("Cannot update resource with ID {} with object using ID {}", id, todoItem.id)
+            );
+        }
+        // ensure the ID exists
         if(!service.existsById(id)) {
             // if doesn't, this would be a creation - throw an exception
             throw new ResourceExistsException();

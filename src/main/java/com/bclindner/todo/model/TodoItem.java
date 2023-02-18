@@ -1,9 +1,15 @@
 package com.bclindner.todo.model;
 
+import java.time.Instant;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.ReadOnlyProperty;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
@@ -15,7 +21,21 @@ import jakarta.persistence.Id;
  * i.e. iCalendar's VTODO spec.
  */
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class TodoItem {
+    /**
+     * Default constructor for the TodoItem.
+     */
+    public TodoItem() {
+    }
+    /**
+     * Create a basic TodoItem with no ID in an incomplete state.
+     * This is helpful for creation in a TodoItemRepository.
+     * @param title Title of the TodoItem.
+     */
+    public TodoItem(String title) {
+        this.title = title;
+    }
     /**
      * Database generated ID.
      * Managed by Spring Data.
@@ -41,7 +61,7 @@ public class TodoItem {
     /**
      * Whether or not this TodoItem has been marked as completed.
      */
-    public Boolean completed;
+    public Boolean completed = false;
     public Boolean getCompleted() {
         return completed;
     }
@@ -53,8 +73,9 @@ public class TodoItem {
      * Managed by Spring Data.
      */
     @CreatedDate
-    public String createdDate;
-    public String getCreatedDate() {
+    @Column(updatable=false)
+    private Instant createdDate;
+    public Instant getCreatedDate() {
         return createdDate;
     }
     /**
@@ -62,27 +83,10 @@ public class TodoItem {
      * Managed by Spring Data.
      */
     @LastModifiedDate
-    public String lastModifiedDate;
-    public String getLastModifiedDate() {
+    public Instant lastModifiedDate;
+    public Instant getLastModifiedDate() {
         return lastModifiedDate;
     }
-    /**
-     * Default constructor for the TodoItem.
-     */
-    public TodoItem() {
-    }
-    /**
-     * Create a basic TodoItem with no ID in an incomplete state.
-     * This is helpful for creation in a TodoItemRepository.
-     * @param title Title of the TodoItem.
-     */
-    public TodoItem(String title) {
-        this.title = title;
-    }
-    /**
-     * Auto-generated hashCode function.
-     * Re-generate if the model is changed.
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -94,10 +98,6 @@ public class TodoItem {
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         return result;
     }
-    /**
-     * Auto-generated equality function.
-     * Re-generate if the model is changed.
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

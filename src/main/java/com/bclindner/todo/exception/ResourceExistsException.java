@@ -9,4 +9,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
 public class ResourceExistsException extends RuntimeException {
+    public ResourceExistsException() {
+        super("Resource already exists");
+    }
+    public ResourceExistsException(String msg) {
+        super(msg);
+    }
 }
