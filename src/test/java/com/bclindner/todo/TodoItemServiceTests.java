@@ -9,7 +9,7 @@ import com.bclindner.todo.model.TodoItem;
 import com.bclindner.todo.service.TodoItemService;
 
 @SpringBootTest
-class TodoApplicationTests {
+class TodoItemServiceTests {
 	
 	@Autowired
 	public TodoItemService todoItemService;
@@ -52,9 +52,12 @@ class TodoApplicationTests {
 		todo.setText("test todoItemUpdate");
 		todoItemService.save(todo);
 		var todoDbContainer = todoItemService.getById(todo.id);
-		Assert.isTrue(todoDbContainer.isPresent(), "TodoItem could not be retrieved after creation");
+		Assert.isTrue(todoDbContainer.isPresent(), "TodoItem could not be retrieved after update");
 		var todoDb = todoDbContainer.get();
 		compareTodoItems(todo, todoDb);
+		// one particular issue i found during this caused the createDate to be null when updating, so let's check that
+		Assert.notNull(todoDb.getCreatedDate(), "Updated TodoItem has no CreatedDate");
+		
 	}
 
 	@Test
