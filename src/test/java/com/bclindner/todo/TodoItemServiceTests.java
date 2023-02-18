@@ -3,12 +3,14 @@ package com.bclindner.todo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.Assert;
 
 import com.bclindner.todo.model.TodoItem;
 import com.bclindner.todo.service.TodoItemService;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class TodoItemServiceTests {
 	
 	@Autowired
