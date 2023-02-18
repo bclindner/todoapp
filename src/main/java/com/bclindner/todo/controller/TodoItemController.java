@@ -1,6 +1,8 @@
 package com.bclindner.todo.controller;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +23,45 @@ import com.bclindner.todo.exception.ResourceNotFoundException;
 import com.bclindner.todo.model.TodoItem;
 import com.bclindner.todo.service.TodoItemService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * REST controller for TodoItems.
  */
 @RestController
 @RequestMapping("/todo-item")
+@Tag(name="TodoItem API", description = "API for to-do list items.")
 public class TodoItemController {
     
     @Autowired
     private TodoItemService service;
 
-    /**
-     * Create a TodoItem.
-     * @param todoItem
-     * @return The created TodoItem.
-     */
     @PostMapping("/")
+    @Operation(
+        summary = "Create TodoItem",
+        description = "Create a to-do list item. Note that this will not perform updates - the API will return 400 if an ID is specified.",
+        responses = {
+            @ApiResponse(
+                responseCode = "201",
+                description = "TodoItem creation was successful",
+                headers = {
+                    @Header(
+                        name = "Location",
+                        schema = @Schema(type = "string"),
+                        description = "Link to the created TodoItem"
+                    )
+                }
+            ),
+            @ApiResponse(
+                responseCode = "400",
+                description = "TodoItem is not correctly formatted"
+            )
+        }
+    )
     public ResponseEntity<TodoItem> createTodo(@RequestBody TodoItem todoItem) throws ResourceExistsException {
         // ensure the todo item does not have a set ID
         //
@@ -68,26 +93,51 @@ public class TodoItemController {
             .body(newTodoItem);
     }
 
-    /**
-     * Returns all TodoItems.
-     * 
-     * At larger scales, it would be important to both paginate this and
-     * implement more advanced querying, but we are skipping that for now.
-     *
-     * @return To-do item list.
-     */
     @GetMapping("/")
-    public Iterable<TodoItem> getAllTodos() {
-        return service.findAll();
+    @Operation(
+        summary = "List TodoItems",
+        description = "List all available TodoItems.",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Success"
+            ),
+            @ApiResponse(
+                responseCode = "204",
+                description = "No TodoItems to show"
+            )
+        }
+    )
+    public ResponseEntity<Collection<TodoItem>> getAllTodos() {
+        var todos = service.findAll();
+        // convert to a collection so we can see the length
+        var todoList = new ArrayList<TodoItem>();
+        todos.forEach(todoList::add);
+        // REST convention: if the list is empty, return 204 instead of 200,
+        // just as extra confirmation that yes, there are no TodoItems
+        if (todoList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        
+        return ResponseEntity.ok(todoList);
     }
     
-    /**
-     * Get a TodoItem by its ID.
-     * @param id ID of the TodoItem.
-     * @return TodoItem (if it exists).
-     */
     @GetMapping("/{id}")
-    public TodoItem getTodoById(@PathVariable Long id) {
+    @Operation(
+        summary = "Get TodoItem by ID",
+        description = "Get a TodoItem by its ID.",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Success"
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "No TodoItem with the specified ID exists"
+            )
+        }
+    )
+    public TodoItem getTodoById(@PathVariable Long id) throws ResourceNotFoundException {
         Optional<TodoItem> todoItem = service.getById(id);
         // if we got nothing, throw an exception
         if(!todoItem.isPresent()) {
@@ -96,19 +146,25 @@ public class TodoItemController {
         return todoItem.get();
     }
 
-    /**
-     * Update a to-do item by its ID.
-     * @param id ID of the TodoItem.
-     * @param todoItem Item to update.
-     * @return Updated TodoItem.
-     */
     @PutMapping("/{id}")
-    public TodoItem updateTodo(@PathVariable Long id, @RequestBody TodoItem todoItem) {
+    @Operation(
+        summary = "Update TodoItem",
+        description = "Update a TodoItem by its ID.",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Success"
+            ),
+            @ApiResponse(
+                responseCode = "400",
+                description = "TodoItem is malformatted"
+            )
+        }
+    )
+    public TodoItem updateTodo(@PathVariable Long id, @RequestBody TodoItem todoItem) throws BadResourceException, ResourceExistsException{
         // ensure the todoItem ID matches the path
         if (id != todoItem.id) {
-            throw new BadResourceException(
-                String.format("Cannot update resource with ID {} with object using ID {}", id, todoItem.id)
-            );
+            throw new BadResourceException();
         }
         // ensure the ID exists
         if(!service.existsById(id)) {
@@ -125,6 +181,16 @@ public class TodoItemController {
      * @param id ID of the TodoItem.
      */
     @DeleteMapping("/{id}")
+    @Operation(
+        summary = "Delete TodoItem",
+        description = "Delete a TodoItem by its ID.",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Deletion successful"
+            )
+        }
+    )
     public void deleteTodo(@PathVariable Long id) {
         service.deleteById(id);
     }

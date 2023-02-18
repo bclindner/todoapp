@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -41,6 +42,7 @@ public class TodoItem {
      */
     @Id
     @GeneratedValue
+    @Schema(example="1", description = "Database generated ID.")
     public Long id; 
     public Long getId() {
         return id;
@@ -49,6 +51,7 @@ public class TodoItem {
      * Text content of the to-do item.
      */
     @Column(length=256,nullable=false)
+    @Schema(example="To-do item", description = "Text content of the to-do item.")
     public String text;
     public String getText() {
         return text;
@@ -59,6 +62,7 @@ public class TodoItem {
     /**
      * Whether or not this TodoItem has been marked as completed.
      */
+    @Schema(example="false", description = "Whether or not this TodoItem has been marked as completed.")
     public Boolean completed = false;
     public Boolean getCompleted() {
         return completed;
@@ -74,6 +78,7 @@ public class TodoItem {
     // prevent this from being updated:
     // https://github.com/spring-projects/spring-data-rest/issues/1565
     @Column(updatable=false)
+    @Schema(example="2023-02-18T17:37:30.282Z", description = "Date this TodoItem was created.")
     private Instant createdDate;
     public Instant getCreatedDate() {
         return createdDate;
@@ -83,6 +88,7 @@ public class TodoItem {
      * Managed by Spring Data.
      */
     @LastModifiedDate
+    @Schema(example="2023-02-18T17:37:30.282Z", description = "Date this TodoItem was last changed.")
     public Instant lastModifiedDate;
     public Instant getLastModifiedDate() {
         return lastModifiedDate;
