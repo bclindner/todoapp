@@ -109,11 +109,7 @@ public class TodoItemController {
             @ApiResponse(
                 responseCode = "204",
                 description = "No TodoItems to show"
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized"
-            ),
+            )
         }
     )
     public ResponseEntity<Collection<TodoItem>> getAllTodos() {
