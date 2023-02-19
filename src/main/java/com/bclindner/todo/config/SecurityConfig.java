@@ -1,7 +1,8 @@
-package com.bclindner.todo;
+package com.bclindner.todo.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,6 +14,9 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.bclindner.todo.util.AudienceValidator;
+
 
 /**
  * Spring Security configuration for this app.
@@ -27,10 +31,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // REST API is stateless
         http.sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        // use oauth2 login
-        http.oauth2Login();
-
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .oauth2Login();
         return http.build();
     }
     

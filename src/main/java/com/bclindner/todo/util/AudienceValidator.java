@@ -1,4 +1,4 @@
-package com.bclindner.todo;
+package com.bclindner.todo.util;
 
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -11,10 +11,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
  * Referenced from Auth0's guide:
  * https://auth0.com/docs/quickstart/backend/java-spring-security5/01-authorization#validate-the-audience
  */
-class AudienceValidator implements OAuth2TokenValidator<Jwt> {
+public class AudienceValidator implements OAuth2TokenValidator<Jwt> {
     private final String audience;
 
-    AudienceValidator(String audience) {
+    public AudienceValidator(String audience) {
         this.audience = audience;
     }
 
