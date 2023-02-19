@@ -16,8 +16,8 @@ import com.bclindner.todo.service.EmailService;
  * Scheduled job for sending an e-mail for unfinished tasks.
  */
 @Component
-@ConditionalOnProperty(name="emailjob.enabled",havingValue="true")
 @ConditionalOnBean(EmailService.class)
+@ConditionalOnProperty(name="emailjob.enabled",havingValue="true")
 public class EmailJob {
     
     private Logger logger = LoggerFactory.getLogger(EmailJob.class);

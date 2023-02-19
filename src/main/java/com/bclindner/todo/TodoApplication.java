@@ -20,7 +20,7 @@ public class TodoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TodoApplication.class, args);
 	}
-	
+
 	/**
 	 * Spec for the OpenAPI documentation.
 	 * @param appVersion

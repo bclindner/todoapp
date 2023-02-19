@@ -3,7 +3,7 @@ package com.bclindner.todo.service;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,10 +17,10 @@ import com.bclindner.todo.model.TodoItem;
  * Currently only used for EmailJob, but should be extended if further email
  * send capabilities are required in the app.
  */
-@Service
-// Only initialize this if JavaMailSender is available for autowire
+// Only initialize this after JavaMailSender is available for autowire
 // (it won't be if the mail properties are not configured)
-@ConditionalOnBean(JavaMailSender.class)
+@AutoConfigureAfter(JavaMailSender.class)
+@Service
 public class EmailService {
     
     @Autowired
