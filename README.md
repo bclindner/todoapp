@@ -14,8 +14,8 @@
 
 ### Dev Environment
 
-This project is using Spring 6, Spring Boot 3, and Java JDK 17. Ensure you have
-those installed and set up before attempting to run this.
+This project is using Java JDK 17. Ensure you have those installed and set up
+in your environment before attempting setup.
 
 To begin, clone down the Git repository:
 
@@ -24,31 +24,19 @@ git clone https://github.com/bclindner/todoapp
 cd todoapp
 ```
 
-The project's dependencies are managed through Maven - install them here, or
-through your IDE if it has support. Keep in mind this step is entirely
-optional, this will occur as part of any attempt to compile the app as well:
+The project is managed through Maven. You can run this command to download
+Maven and the project's dependencies (this will make first compilation take
+less time later):
 
 ```
 ./mvnw dependency:resolve
 ```
 
-From here, you should be able to run the app with dev properties via this
-command.
-
-```
-./mvnw -Dspring-boot.run.profiles="dev" spring-boot:run
-```
-
-This is an ease-of-use config - OAuth authentication and the email job are
-disabled. You can visit the docs at site at
-http://localhost:8080/swagger-ui.html, using the username "user" and the
-password in the app logs. (API requests can be made using similar HTTP Basic
-auth settings.)
-
-To test with authentication, you will want an Application and API set up in
-Auth0 - the settings provided are for the developer's use, and for
-demonstration. Without a valid client ID and secret, the API will return 4xx
-errors on all requests.
+You will also need an Auth0 tenant to run this as-intended. You will want an
+API set up in Auth0 to configure this app - the settings provided are for the
+developer's use, and for demonstration. Additionally, without a valid client ID
+and secret, the API will return 401/403 errors on all requests - see
+[API Client Authentication](#API_Client_Authentication) for details.
 
 Change these two settings in `src/main/resources/application.properties` (or
 any profile you'd like to activate) once you've gotten an Auth0 environment set
@@ -76,24 +64,32 @@ dev profile:
 ./mvnw spring-boot:run
 ```
 
+### API Client Authentication
+
 The easiest way to test the API yourself would be to go to
 `http://localhost:8080/swagger-ui.html` - that will open up the Swagger
 documentation. If you prefer a client like Postman or Insomnia, you can
 download the OpenAPI spec from `http://localhost:8080/v3/api-docs.yaml` - the
 API spec includes auth and the instructions will be mostly the same from there.
 
-Create a new "single page" Application in the Auth0 dashboard, and add
+You will need to do some more Auth0 dashboard legwork for this part. Create a
+new "single page" Application in Auth0, and add
 `http://localhost:8080/swagger-ui/oauth2-redirect.html` as an allowed callback
 URL. Paste in the client ID and secret (and the redirect URL on a REST client)
 to start the authorization flow. If all goes well, you should be logged in and
-able to test the requests from there.
+able to test the requests from your client - congratulations!
+
+This is just a test of the authorization code flow - this is set up as a
+generic resource server, so while the other pertinent OAuth flows are untested,
+they should work fine.
 
 ### Building & Running in Production Environment
 
 To run this in production, I would recommend creating a separate
 `application.properties` file to use when launching the app from your prod
 server, as the properties would include some sensitive info like the SMTP login
-credentials.
+credentials and any production tenant info (it's probably fine, but you can
+never be too sure, right?).
 
 You may also want to take some time to add dependencies to pom.xml to set up
 JDBC connections for a database, as this persists all records to an internal
@@ -107,9 +103,10 @@ With all that said, let's build the project. Run:
 ./mvnw clean package spring-boot:repackage
 ```
 
-This will build a runnable fat JAR in `target/todo-0.0.1-SNAPSHOT.jar`.
+This will build a runnable "fat JAR" in `target/todo-0.0.1-SNAPSHOT.jar`,
+containing all dependencies.
 
-You can run this JAR file with the aforementioned external properties via:
+You can run this JAR file via the `java` runtime:
 
 ```
 java -jar todo-0.0.1-SNAPSHOT.jar
@@ -129,3 +126,6 @@ launching to apply your settings.
 * Full-stack test with web frontend
 * Offload Scheduled job to a clustered CronJob if running Kubernetes
   architecture for reliability/cluster-safety
+* `Dockerfile` config for containerized deployment
+* `docker-compose` config or Helm chart for containerized deployment w/
+  database
