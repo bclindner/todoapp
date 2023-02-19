@@ -27,6 +27,7 @@ import com.bclindner.todo.service.TodoItemService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -37,12 +38,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @RestController
 @RequestMapping("/todo-item")
 @Tag(name="TodoItem API", description = "API for to-do list items.")
+@SecurityRequirement(name = "OAuth2")
 public class TodoItemController {
     
     @Autowired
     private TodoItemService service;
 
-    @PostMapping("/")
+    @PostMapping()
     @Operation(
         summary = "Create TodoItem",
         description = "Create a to-do list item. Note that this will not perform updates - the API will return 400 if an ID is specified.",
@@ -95,7 +97,7 @@ public class TodoItemController {
             .body(newTodoItem);
     }
 
-    @GetMapping("/")
+    @GetMapping()
     @Operation(
         summary = "List TodoItems",
         description = "List all available TodoItems.",

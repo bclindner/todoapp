@@ -41,14 +41,13 @@ public class TodoItemControllerTests {
     @Test
     public void testGetEmpty() throws Exception {
         mvc.perform(
-            get("/todo-item/")
+            get("/todo-item")
             .contentType("application/json"))
             .andExpect(status().isNoContent());
     }
     
     /**
-     * Test that the /todo-item/ endpoint returns 404 properly if no trailing
-     * slash is specified.
+     * Test that the /todo-item/ endpoint returns 404 properly.
      *
      * I don't like this behavior personally - the trailing slash should be
      * neither here nor there when requesting a REST collection - but
@@ -67,9 +66,9 @@ public class TodoItemControllerTests {
      * @throws Exception
      */
     @Test
-    public void testTrailingSlashRequired() throws Exception {
+    public void testNoTrailingSlashRequired() throws Exception {
         mvc.perform(
-            get("/todo-item")
+            get("/todo-item/")
             .contentType("application/json"))
             .andExpect(status().is(404));
     }
@@ -82,7 +81,7 @@ public class TodoItemControllerTests {
     @DirtiesContext
     public void testCreate() throws Exception {
         mvc.perform(
-            post("/todo-item/")
+            post("/todo-item")
             .contentType("application/json")
             .accept("application/json")
             .content("{\"text\": \"To-do item\"}")
@@ -108,7 +107,7 @@ public class TodoItemControllerTests {
         TodoItem todoItem1 = todoItemService.save(new TodoItem("testGetAll1"));
         TodoItem todoItem2 = todoItemService.save(new TodoItem("testGetAll2"));
         mvc.perform(
-            get("/todo-item/")
+            get("/todo-item")
             .accept("application/json")
         )
         .andExpect(status().isOk())

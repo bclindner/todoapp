@@ -7,25 +7,24 @@ import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.OAuthFlow;
 import io.swagger.v3.oas.annotations.security.OAuthFlows;
-import io.swagger.v3.oas.annotations.security.OAuthScope;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 
 @SecurityScheme(
-        name = "auth0",
+        name = "OAuth2",
         type = SecuritySchemeType.OAUTH2,
         flows = @OAuthFlows(
             authorizationCode = @OAuthFlow(
-            authorizationUrl = "${springdoc.swagger-ui.oauth2RedirectUrl}",
-            tokenUrl = "${springdoc.oAuthFlow.tokenUrl}",
-            scopes = {
-                @OAuthScope(name = "todoitem:read", description = "Read TodoItem resources"),
-                @OAuthScope(name = "todoitem:modify", description = "Modify TodoItem resources")
-            }
+            authorizationUrl = "${springdoc.swagger-ui.authorizeUrl}",
+            tokenUrl = "${springdoc.swagger-ui.tokenUrl}",
+            scopes = {}
         )
     )
 )
+@SecurityRequirement(name = "OAuth2")
 @Configuration
 public class SwaggerConfig {
 
@@ -42,6 +41,12 @@ public class SwaggerConfig {
 					.title("To-Do App")	
 					.description("Primitive to-do list API.")
 					.version(appVersion)
+                    .contact(
+                        new Contact()
+                        .name("Brian Lindner")
+                        .email("brian@bclindner.com")
+                        .url("https://bclindner.com")
+                    )
 			);
 	}
 }

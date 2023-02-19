@@ -59,6 +59,12 @@ auth0.audience=audience-id-for-your-app
 spring.security.oauth2.resourceserver.jwt.issuer-uri=jwt-issuer-uri
 ```
 
+Important to note that if you're pulling the /authorize endpoint directly out
+of Auth0 you'll have to include some extra settings. The example is in
+`application.properties`. Note the `?audience=<your-audience-uri>` appended to
+the authorizeUrl - you need to have that for it to direct properly from OpenAPI
+consumers.
+
 To test with the email job, you'll need an SMTP server. As an example,
 SMTPBucket is set up in the default profile - use it as a reference for the
 settings to change.
@@ -69,6 +75,18 @@ dev profile:
 ```
 ./mvnw spring-boot:run
 ```
+
+The easiest way to test the API yourself would be to go to
+`http://localhost:8080/swagger-ui.html` - that will open up the Swagger
+documentation. If you prefer a client like Postman or Insomnia, you can
+download the OpenAPI spec from `http://localhost:8080/v3/api-docs.yaml` - the
+API spec includes auth and the instructions will be mostly the same from there.
+
+Create a new "single page" Application in the Auth0 dashboard, and add
+`http://localhost:8080/swagger-ui/oauth2-redirect.html` as an allowed callback
+URL. Paste in the client ID and secret (and the redirect URL on a REST client)
+to start the authorization flow. If all goes well, you should be logged in and
+able to test the requests from there.
 
 ### Building & Running in Production Environment
 
@@ -111,5 +129,3 @@ launching to apply your settings.
 * Full-stack test with web frontend
 * Offload Scheduled job to a clustered CronJob if running Kubernetes
   architecture for reliability/cluster-safety
-* Hardening of existing SecurityConfig filter chain and settings
-* Improvement of Swagger UI security setting documentation

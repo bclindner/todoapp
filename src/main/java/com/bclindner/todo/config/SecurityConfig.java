@@ -2,17 +2,17 @@ package com.bclindner.todo.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.bclindner.todo.util.AudienceValidator;
@@ -25,18 +25,9 @@ import com.bclindner.todo.util.AudienceValidator;
  * Partially referenced from Auth0's guide:
  * https://auth0.com/docs/quickstart/backend/java-spring-security5/01-authorization#configure-the-resource-server
  */
+@Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // REST API is stateless
-        http.sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .oauth2Login();
-        return http.build();
-    }
-    
     @Bean
     JwtDecoder jwtDecoder(
         @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuer,
@@ -48,5 +39,25 @@ public class SecurityConfig {
         OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<Jwt>(withIssuer, audienceValidator);
         decoder.setJwtValidator(withAudience);
         return decoder;
+    }
+    
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        // Ignore Swagger UI
+        return (web) -> web.ignoring()
+            .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/**");
+    }
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/todo-item/**")
+                .authenticated()
+            )
+            .oauth2ResourceServer()
+            .jwt()
+            .and();
+        return http.build();
     }
 }
