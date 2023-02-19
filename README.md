@@ -14,8 +14,9 @@
 
 ### Dev Environment
 
-This project is using Java JDK 17. Ensure you have those installed and set up
-in your environment before attempting setup.
+This project is using Java JDK 17. Ensure you have it installed and in your
+PATH/JAVA_HOME and otherwise set up in your environment before attempting
+setup.
 
 To begin, clone down the Git repository:
 
