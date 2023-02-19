@@ -39,14 +39,7 @@ developer's use, and for demonstration. Additionally, without a valid client ID
 and secret, the API will return 401/403 errors on all requests - see
 [API Client Authentication](#API_Client_Authentication) for details.
 
-Change these two settings in `src/main/resources/application.properties` (or
-any profile you'd like to activate) once you've gotten an Auth0 environment set
-up:
-
-```
-auth0.audience=audience-id-for-your-app
-spring.security.oauth2.resourceserver.jwt.issuer-uri=jwt-issuer-uri
-```
+Change settings in `src/main/resources/application.properties`
 
 Important to note that if you're pulling the /authorize endpoint directly out
 of Auth0 you'll have to include some extra settings. The example is in
@@ -58,8 +51,7 @@ To test with the email job, you'll need an SMTP server. As an example,
 SMTPBucket is set up in the default profile - use it as a reference for the
 settings to change.
 
-To test both the email job and authentication, simply run the app without the
-dev profile:
+To run the application, do:
 
 ```
 ./mvnw spring-boot:run
