@@ -25,7 +25,8 @@ cd todoapp
 ```
 
 The project's dependencies are managed through Maven - install them here, or
-through your IDE if it has support:
+through your IDE if it has support. Keep in mind this step is entirely
+optional, this will occur as part of any attempt to compile the app as well:
 
 ```
 ./mvnw dependency:resolve
